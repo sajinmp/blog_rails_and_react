@@ -131,11 +131,12 @@ RSpec.describe "/posts", type: :request do
   end
 
   describe "DELETE /destroy" do
-    it "destroys the requested post" do
-      post = Post.create! valid_attributes
-      expect {
-        delete post_url(post), headers: valid_headers, as: :json
-      }.to change(Post, :count).by(-1)
+    let!(:post) { Post.create! valid_attributes }
+    
+    subject { delete post_url(post), as: :json }
+
+    it "deletes the requested post" do
+      expect { subject }.to change(Post, :count).by(-1)
     end
   end
 end
