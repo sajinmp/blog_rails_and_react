@@ -30,7 +30,7 @@ class PostsController < ApplicationController
     if @post.update(post_params)
       render :show, status: :ok, location: @post
     else
-      render json: @post.errors, status: :unprocessable_entity
+      render json: {errors: @post.errors.full_messages}, status: :unprocessable_entity
     end
   end
 

@@ -119,6 +119,7 @@ RSpec.describe "/posts", type: :request do
       end
 
       it "returns a response with http status unprocessable entity" do
+        subject
         expect(response).to have_http_status(:unprocessable_entity)
       end
 
