@@ -30,10 +30,16 @@ RSpec.describe "/posts", type: :request do
   end
 
   describe "GET /show" do
+    let!(:post) { Post.create! valid_attributes }
+
+    before { get post_url(post), as: :json }
+
     it "renders a successful response" do
-      post = Post.create! valid_attributes
-      get post_url(post), as: :json
       expect(response).to be_successful
+    end
+
+    it "returns the requested post" do
+      expect(JSON.parse(response.body)["title"]).to eq(post.title)
     end
   end
 
