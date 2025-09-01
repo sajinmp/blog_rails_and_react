@@ -112,12 +112,19 @@ RSpec.describe "/posts", type: :request do
     end
 
     context "with invalid parameters" do
-      it "renders a JSON response with errors for the post" do
-        post = Post.create! valid_attributes
-        patch post_url(post),
-              params: { post: invalid_attributes }, headers: valid_headers, as: :json
+      let(:params) { { post: invalid_attributes } }
+
+      it "does not update the post" do
+        expect { subject }.to_not change { post.reload.title }
+      end
+
+      it "returns a response with http status unprocessable entity" do
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to match(a_string_including("application/json"))
+      end
+
+      it "returns a JSON response with errors for the post" do
+        subject
+        expect(JSON.parse(response.body)).to have_key("errors")
       end
     end
   end
