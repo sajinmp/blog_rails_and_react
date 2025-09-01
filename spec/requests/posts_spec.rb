@@ -86,25 +86,28 @@ RSpec.describe "/posts", type: :request do
   end
 
   describe "PATCH /update" do
+    let!(:post) { Post.create! valid_attributes }
+
+    subject { patch post_url(post), params: params, as: :json }
+
     context "with valid parameters" do
       let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
+        { title: "Updated Post", content: "This is updated content." }
       }
+      let(:params) { { post: new_attributes } }
 
       it "updates the requested post" do
-        post = Post.create! valid_attributes
-        patch post_url(post),
-              params: { post: new_attributes }, headers: valid_headers, as: :json
-        post.reload
-        skip("Add assertions for updated state")
+        expect { subject }.to change { post.reload.title }.from("Sample Post").to("Updated Post")
       end
 
-      it "renders a JSON response with the post" do
-        post = Post.create! valid_attributes
-        patch post_url(post),
-              params: { post: new_attributes }, headers: valid_headers, as: :json
+      it "returns a response with http status ok" do
+        subject
         expect(response).to have_http_status(:ok)
-        expect(response.content_type).to match(a_string_including("application/json"))
+      end
+
+      it "returns a JSON response with the post" do
+        subject
+        expect(JSON.parse(response.body)["title"]).to eq("Updated Post")
       end
     end
 
