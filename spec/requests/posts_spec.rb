@@ -44,19 +44,25 @@ RSpec.describe "/posts", type: :request do
   end
 
   describe "POST /create" do
+    subject do
+      post posts_url, params: params, as: :json
+    end
+
     context "with valid parameters" do
+      let(:params) { { post: valid_attributes } }
+
       it "creates a new Post" do
-        expect {
-          post posts_url,
-               params: { post: valid_attributes }, headers: valid_headers, as: :json
-        }.to change(Post, :count).by(1)
+        expect { subject }.to change(Post, :count).by(1)
+      end
+
+      it "returns a response with a created http status" do
+        subject
+        expect(response).to have_http_status(:created)
       end
 
       it "renders a JSON response with the new post" do
-        post posts_url,
-             params: { post: valid_attributes }, headers: valid_headers, as: :json
-        expect(response).to have_http_status(:created)
-        expect(response.content_type).to match(a_string_including("application/json"))
+        subject
+        expect(JSON.parse(response.body)["title"]).to eq("Sample Post")
       end
     end
 
