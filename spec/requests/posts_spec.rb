@@ -5,7 +5,7 @@ RSpec.describe "/posts", type: :request do
     { title: "Sample Post", content: "This is a sample post content." }
   }
 
-  let(:invalid_attributes) { {} }
+  let(:invalid_attributes) { { title: "", content: "" } }
 
   describe "GET /index" do
     let!(:post) { Post.create! valid_attributes }
@@ -67,18 +67,20 @@ RSpec.describe "/posts", type: :request do
     end
 
     context "with invalid parameters" do
+      let(:params) { { post: invalid_attributes } }
+
       it "does not create a new Post" do
-        expect {
-          post posts_url,
-               params: { post: invalid_attributes }, as: :json
-        }.to change(Post, :count).by(0)
+        expect { subject }.to change(Post, :count).by(0)
       end
 
-      it "renders a JSON response with errors for the new post" do
-        post posts_url,
-             params: { post: invalid_attributes }, headers: valid_headers, as: :json
+      it "returns a response with an unprocessable entity http status" do
+        subject
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to match(a_string_including("application/json"))
+      end
+
+      it "returns a JSON response with errors for the new post" do
+        subject
+        expect(JSON.parse(response.body)).to have_key("errors")
       end
     end
   end
