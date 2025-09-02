@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { API_URL } from '../../constants';
 
 const PostList = () => {
@@ -26,7 +27,11 @@ const PostList = () => {
       <h2>Posts</h2>
       {posts.map(post => (
         <div key={post.id} className="post-container">
-          <h3>{post.title}</h3>
+          <h3>
+            <Link to={`/posts/${post.id}`} className="post-link">
+              {post.title}
+            </Link>
+          </h3>
           <p>{post.content}</p>
         </div>
       ))}
