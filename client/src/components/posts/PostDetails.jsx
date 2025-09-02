@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { API_URL } from '../../constants';
+import { fetchPost, deletePost as deletePostById } from '../../services/postService';
 
 const PostDetails = () => {
   const [post, setPost] = useState(null);
@@ -8,32 +8,21 @@ const PostDetails = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    async function fetchPost() {
+    async function getPost() {
       try {
-        const response = await fetch(`${API_URL}/posts/${id}`);
-        if (response.ok) {
-          const data = await response.json();
-          setPost(data);
-        } else {
-          throw response;
-        }
+        const data = await fetchPost(id);
+        setPost(data);
       } catch (error) {
         console.error('Error fetching post:', error);
       }
     }
-    fetchPost();
+    getPost();
   }, [id]);
 
   const deletePost = async () => {
     try {
-      const response = await fetch(`${API_URL}/posts/${id}`, {
-        method: 'DELETE',
-      });
-      if (response.ok) {
-        navigate('/');
-      } else {
-        throw response;
-      }
+      await deletePostById(id);
+      navigate('/');
     } catch (error) {
       console.error('Error deleting post:', error);
     }
