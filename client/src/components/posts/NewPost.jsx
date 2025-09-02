@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { API_URL } from '../../constants';
+import { createPost } from '../../services/postService';
 
 const NewPost = () => {
   const [title, setTitle] = useState('');
@@ -12,19 +12,11 @@ const NewPost = () => {
 
     const postData = { title, content };
 
-    const response = await fetch(`${API_URL}/posts`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(postData),
-    });
-
-    if (response.ok) {
-      const { id } = await response.json();
-      navigate(`/posts/${id}`);
-    } else {
-      console.error('Error creating post');
+    try {
+      const response = await createPost(postData);
+      navigate(`/posts/${response.id}`);
+    } catch (error) {
+      console.error('Error creating post:', error);
     }
   };
 

@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { API_URL } from '../../constants';
+import {
+  fetchPost as fetchPostById,
+  updatePost
+} from '../../services/postService';
 
 const EditPost = () => {
   const [post, setPost] = useState(null);
@@ -10,13 +13,8 @@ const EditPost = () => {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await fetch(`${API_URL}/posts/${id}`);
-        if (response.ok) {
-          const data = await response.json();
-          setPost(data);
-        } else {
-          throw response;
-        }
+        const data = await fetchPostById(id);
+        setPost(data);
       } catch (error) {
         console.error('Error fetching post:', error);
       }
@@ -27,21 +25,11 @@ const EditPost = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      const response = await fetch(`${API_URL}/posts/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ title: post.title, content: post.content}),
-      });
+    const postData = { title: post.title, content: post.content };
 
-      if (response.ok) {
-        const updatedPost = await response.json();
-        navigate(`/posts/${updatedPost.id}`);
-      } else {
-        throw response;
-      }
+    try {
+      await updatePost(id, postData);
+      navigate(`/posts/${id}`);
     } catch (error) {
       console.error('Error updating post:', error);
     }
