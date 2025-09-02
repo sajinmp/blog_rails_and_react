@@ -9,6 +9,7 @@ RSpec.describe "/posts", type: :request do
 
   describe "GET /index" do
     let!(:post) { Post.create! valid_attributes }
+    let!(:post2) { Post.create! valid_attributes }
 
     before { get posts_url, as: :json }
 
@@ -21,11 +22,15 @@ RSpec.describe "/posts", type: :request do
     end
 
     it "returns all posts" do
-      expect(JSON.parse(response.body).size).to eq(1)
+      expect(JSON.parse(response.body).size).to eq(2)
     end
 
     it "includes the created post in the response" do
       expect(JSON.parse(response.body).first["title"]).to eq(post.title)
+    end
+
+    it "returns posts in descending order of creation" do
+      expect(JSON.parse(response.body).first["id"]).to eq(post2.id)
     end
   end
 
