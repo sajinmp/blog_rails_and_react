@@ -48,6 +48,8 @@ const PostList = () => {
             </Link>
           </h3>
           <div className="post-link">
+            <Link to={`/posts/${post.id}/edit`}>Edit</Link>
+            {" | "}
             <button onClick={() => deletePost(post.id)}>Delete</button>
           </div>
         </div>
