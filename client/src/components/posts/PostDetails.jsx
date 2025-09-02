@@ -5,6 +5,7 @@ import { API_URL } from '../../constants';
 const PostDetails = () => {
   const [post, setPost] = useState(null);
   const { id } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchPost() {
@@ -23,6 +24,21 @@ const PostDetails = () => {
     fetchPost();
   }, [id]);
 
+  const deletePost = async () => {
+    try {
+      const response = await fetch(`${API_URL}/posts/${id}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        navigate('/');
+      } else {
+        throw response;
+      }
+    } catch (error) {
+      console.error('Error deleting post:', error);
+    }
+  };
+
   if (!post) {
     return <div>Loading...</div>;
   }
@@ -31,6 +47,11 @@ const PostDetails = () => {
     <div>
       <h2>{post.title}</h2>
       <p>{post.content}</p>
+      <Link to={`/posts/${post.id}/edit`}>Edit Post</Link>
+      {" | "}
+      <Link to="/">Back to Post List</Link>
+      {" | "}
+      <button onClick={deletePost}>Delete Post</button>
     </div>
   );
 }
