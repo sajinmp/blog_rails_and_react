@@ -34,6 +34,7 @@ const NewPost = () => {
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="title">Title:</label>
+          <br />
           <input
             type="text"
             id="title"
@@ -44,6 +45,7 @@ const NewPost = () => {
         </div>
         <div>
           <label htmlFor="content">Content:</label>
+          <br />
           <textarea
             id="content"
             value={content}
