@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { API_URL } from '../../constants';
 
-function PostList() {
+const PostList = () => {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
